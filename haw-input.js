@@ -5,20 +5,18 @@
  * When the chord key ` is typed, allows output of an ʻokina or lower case kahakō.
  * When the chord key \ is typed, allows output of upper case kahakō.
  * 
- * @param {String} element_id The ID of the input or textarea to bind to.
+ * @param {object} element The DOM element to bind the script to, should be a text input or textarea.
  * @returns {boolean} True if the binding succeeds (currently it always should)
  */
-function hawInput(element_id) {
+function hawInput(element) {
   // Set hash of values for input replacement.
   const HAWI_BACKTICK_KEYS = {"'":"ʻ", "a":"ā", "e":"ē", "i":"ī", "o":"ō", "u":"ū"}
   const HAWI_BACKSLASH_KEYS = {"a":"Ā", "e":"Ē", "i":"Ī", "o":"Ō", "u":"Ū"}
-  // Set input element; maybe change this to work with classes or any passed in element?
-  const text_input = document.getElementById(element_id);
   // Flag for whether the backtick or backslash key has been pressed.
   let backtick_flag = false;
   let backslash_flag = false;
   // Listen for keypresses within the provided element.
-  text_input.addEventListener('keypress', (event) => {
+  element.addEventListener('keypress', (event) => {
     const key = event.key;
     // Check and verify the key pressed if no flags are set.
     if(!backtick_flag && !backslash_flag) {
@@ -48,11 +46,11 @@ function hawInput(element_id) {
         // Prevent the default character from being typed.
         event.preventDefault();
         // Insert the replacement character where the cursor is.
-        let start = text_input.selectionStart;
-        let end = text_input.selectionEnd;
-        let val = text_input.value;
-        text_input.value = val.slice(0, start) + replacement_character + val.slice(end);
-        text_input.selectionStart = text_input.selectionEnd = start + 1;
+        let start = element.selectionStart;
+        let end = element.selectionEnd;
+        let val = element.value;
+        element.value = val.slice(0, start) + replacement_character + val.slice(end);
+        element.selectionStart = element.selectionEnd = start + 1;
         // Reset the flags
         backtick_flag = backslash_flag = false;
         return false;

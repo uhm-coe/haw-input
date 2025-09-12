@@ -7,7 +7,7 @@ Mirrors functionality from the Hawaiian Language Input Chrome extension at https
 ## Setup
 
 1. Import `haw-input` in your JavaScript
-2. Call `hawInput(element_id)` with the ID of the text or textarea input element.
+2. Call `hawInput(element)` where `element` is a DOM element object that is either a text input or textarea.
 
 ## Usage
 
@@ -20,7 +20,7 @@ Type the chord key `` ` `` (backtick), then type the matching letter for lowerca
 * u - ū
 * ' - ʻ
 
-For example:  To type `ō`, type the sequence ```o``
+For example:  To type `ō`, type the sequence `` `o``
 
 Type the chord key `\` (backslash), then type the matching letter for uppercase vowel with kahakō as follows:
 
