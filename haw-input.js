@@ -2,27 +2,36 @@
  * hawInput
  * 
  * Binds a listener to an input element specified by the ID of that element.
- * When the chord key ` is typed, allows output of an ʻokina or kahakō.
+ * When the chord key ` is typed, allows output of an ʻokina or lower case kahakō.
+ * When the chord key \ is typed, allows output of upper case kahakō.
  * 
  * @param {String} element_id The ID of the input or textarea to bind to.
  * @returns {boolean} True if the binding succeeds (currently it always should)
  */
 function hawInput(element_id) {
   // Set hash of values for input replacement.
-  const HAWI_BACKTICK_KEYS = {"'":"ʻ", "a":"ā", "e":"ē", "i":"ī", "o":"ō", "u":"ū","A":"Ā", "E":"Ē", "I":"Ī", "O":"Ō", "U":"Ū"}
-  // Set input element; maybe change this to work with classes?
+  const HAWI_BACKTICK_KEYS = {"'":"ʻ", "a":"ā", "e":"ē", "i":"ī", "o":"ō", "u":"ū"}
+  const HAWI_BACKSLASH_KEYS = {"a":"Ā", "e":"Ē", "i":"Ī", "o":"Ō", "u":"Ū"}
+  // Set input element; maybe change this to work with classes or any passed in element?
   const text_input = document.getElementById(element_id);
-  // Flag for whether the backtick key has been pressed.
+  // Flag for whether the backtick or backslash key has been pressed.
   let backtick_flag = false;
+  let backslash_flag = false;
   // Listen for keypresses within the provided element.
   text_input.addEventListener('keypress', (event) => {
     const key = event.key;
-    // Check and verify one of the keys is a chordkey if one is not set.
-    if( !backtick_flag ) {
+    // Check and verify the key pressed if no flags are set.
+    if(!backtick_flag && !backslash_flag) {
       if(key === '`') {
         // Backtick chord key matched, do not type.
         event.preventDefault();
         backtick_flag = true;
+        return false;
+      }
+      if(key === '\\') {
+        // Backslash chord key matched, do not type.
+        event.preventDefault();
+        backslash_flag = true;
         return false;
       } 
     } else {
@@ -30,23 +39,26 @@ function hawInput(element_id) {
       let replacement_character = '';
       if(backtick_flag) {
         replacement_character = hawiCharacterReplace(key, HAWI_BACKTICK_KEYS);
-      } 
+      }
+      if(backslash_flag) {
+        replacement_character = hawiCharacterReplace(key, HAWI_BACKSLASH_KEYS);
+      }
       // If the flag is set, and if the character was replaced, use it in the text.
-      if( (backtick_flag) && (replacement_character != key) ) {
+      if( (backtick_flag || backslash_flag) && (replacement_character != key) ) {
         // Prevent the default character from being typed.
         event.preventDefault();
-        // Put the replacement character in place where it is being typed.
+        // Insert the replacement character where the cursor is.
         let start = text_input.selectionStart;
         let end = text_input.selectionEnd;
         let val = text_input.value;
         text_input.value = val.slice(0, start) + replacement_character + val.slice(end);
         text_input.selectionStart = text_input.selectionEnd = start + 1;
-        // Reset the flag
-        backtick_flag = false;
+        // Reset the flags
+        backtick_flag = backslash_flag = false;
         return false;
       } else {
-        // Reset the flag and allow normal character typing.
-        backtick_flag = false;
+        // Reset the flags and allow normal character typing.
+        backtick_flag = backslash_flag = false;
       }
     }
   });
